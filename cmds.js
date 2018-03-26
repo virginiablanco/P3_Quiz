@@ -216,6 +216,7 @@ exports.playCmd = rl => {
                     log(`No hay nada más que preguntar.`);
                     log(`Fin del examen. Aciertos: `);
                     biglog(`${score}`, 'cyan');
+                    rl.prompt();
                     return;
                 }
 
