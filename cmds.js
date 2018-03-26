@@ -207,24 +207,26 @@ exports.testCmd=(rl,id) => {
  */
 exports.playCmd = rl => {
     let score = 0;
-    let toBeResolved = []; //Array donde guardo los ids de todas las preguntas existentes
+    let toBeResolved = [];
+
     const playOne = () => {
         return Promise.resolve()
             .then(() => {
-                if (toBeResolved.length <= 0) {
+                if (toBeResolved.length <= 0){
                     log(`No hay nada más que preguntar.`);
-                    log(`Fin del examen. Aciertos:`);
-                    biglog(score, 'cyan');
+                    log(`Fin del examen. Aciertos: `);
+                    biglog(`${score}`, 'cyan');
                     rl.prompt();
                     return;
                 }
 
                 let id = Math.floor(Math.random() * toBeResolved.length);
                 let quiz = toBeResolved[id];
-                toBeResolved.splice(id, 1);
-                makeQuestion(rl, `${quiz.question} `)
-                    .then(answer => {
-                        if ((quiz.answer.toLowerCase().trim()) === (answer.toLowerCase().trim())) {
+                toBeResolved.splice(id,1);
+
+                makeQuestion(rl, `${quiz.question}:`)
+                    .then(a => {
+                        if((quiz.answer.toLowerCase().trim()) === (answer.toLowerCase().trim())){
                             score++;
                             log(`CORRECTO - Lleva ${score} aciertos`);
                             return playOne();
@@ -237,13 +239,15 @@ exports.playCmd = rl => {
                     })
             })
     }
-
     models.quiz.findAll({raw: true})
         .then(quizzes => {
-            toBePlayed = quizzes;
+            toBeResolved = quizzes;
+        })
+        .then(() => {
+            return playOne();
         })
         .catch(e => {
-            console.log("Error: " + e);
+            console.log("Error: " +e);
         })
         .then(() => {
             rl.prompt();
