@@ -216,7 +216,6 @@ exports.playCmd = rl => {
                     log(`No hay nada más que preguntar.`);
                     log(`Fin del examen. Aciertos: `);
                     biglog(`${score}`, 'cyan');
-                    rl.prompt();
                     return;
                 }
 
@@ -224,9 +223,9 @@ exports.playCmd = rl => {
                 let quiz = toBeResolved[id];
                 toBeResolved.splice(id,1);
 
-                makeQuestion(rl, `${quiz.question}:`)
+                makeQuestion(rl, `${quiz.question}`)
                     .then(a => {
-                        if((quiz.answer.toLowerCase().trim()) === (answer.toLowerCase().trim())){
+                        if((quiz.answer.toLowerCase().trim()) === (a.toLowerCase().trim())){
                             score++;
                             log(`CORRECTO - Lleva ${score} aciertos`);
                             return playOne();
@@ -238,7 +237,7 @@ exports.playCmd = rl => {
                         }
                     })
             })
-    }
+    };
     models.quiz.findAll({raw: true})
         .then(quizzes => {
             toBeResolved = quizzes;
